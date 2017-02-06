@@ -7,6 +7,8 @@ from esp8266_i2c_lcd import I2cLcd
 
 servo_min_angle = 10
 servo_max_angle = 160
+servo_angle=servo_min_angle
+servo_adjust_angle=10
 # the device is on GPIO12
 dat = machine.Pin(14)
 
@@ -24,6 +26,7 @@ inside_temp=0
 servo_pin = Pin(5)
 
 servo=Servo(servo_pin)
+servo.write_angle(degrees=servo_angle)
 
 i2c = I2C(scl=Pin(13), sda=Pin(12), freq=400000)
 lcd = I2cLcd(i2c, 0x3f, 2, 16)
@@ -58,6 +61,18 @@ for i in range(5):
     lcd.putstr("In % 3.0f Out % 3.0f\nHeated % 3.0f" %
                (inside_temp, outside_temp, heated_temp))
     print(".")
+
+    if heated_temp>inside_temp+8:
+        servo_angle=servo_angle+servo_adjust_angle
+    if heated_temp<inside_temp+3:
+        servo_angle=servo_angle-servo_adjust_angle
+
+    if servo_angle>servo_max_angle:
+        servo_angle=servo_max_angle
+    if servo_angle<servo_min_angle:
+        servo_angle=servo_min_angle
+
+    servo.write_angle(degrees=servo_angle)
 
     time.sleep_ms(10000)
 
