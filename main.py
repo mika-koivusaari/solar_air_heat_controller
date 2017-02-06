@@ -23,6 +23,8 @@ outside_temp=0
 heated_temp=0
 inside_temp=0
 
+stoppin = machine.Pin(0,mode=machine.Pin.IN,pull=machine.Pin.PULL_UP)
+
 servo_pin = Pin(5)
 
 servo=Servo(servo_pin)
@@ -49,7 +51,7 @@ for rom in roms:
 #print('found devices:', roms)
 
 # loop 10 times and print all temperatures
-for i in range(5):
+for i in range(10):
     ds.convert_temp()
     time.sleep_ms(1000)
 
@@ -58,13 +60,13 @@ for i in range(5):
     heated_temp = ds.read_temp(heated_rom)
     
     lcd.clear()
-    lcd.putstr("In % 3.0f Out % 3.0f\nHeated % 3.0f" %
-               (inside_temp, outside_temp, heated_temp))
+    lcd.putstr("In % 3.0f Out % 3.0f\nHeated % 3.0f %d" %
+               (inside_temp, outside_temp, heated_temp, servo_angle))
     print(".")
 
-    if heated_temp>inside_temp+8:
+    if heated_temp>inside_temp+2:
         servo_angle=servo_angle+servo_adjust_angle
-    if heated_temp<inside_temp+3:
+    if heated_temp<inside_temp+1:
         servo_angle=servo_angle-servo_adjust_angle
 
     if servo_angle>servo_max_angle:
@@ -75,6 +77,11 @@ for i in range(5):
     servo.write_angle(degrees=servo_angle)
 
     time.sleep_ms(10000)
+
+    if stoppin.value()==0:
+        print("Pin down, stop")
+        break
+
 
 #init 1-wire
 #sensors:
