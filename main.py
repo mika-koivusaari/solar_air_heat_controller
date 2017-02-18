@@ -1,4 +1,4 @@
-import time
+import utime
 import machine
 from machine import I2C, Pin
 from servo import Servo
@@ -40,7 +40,7 @@ outside_temp=0
 heated_temp=0
 inside_temp=0
 
-stoppin = machine.Pin(0,mode=machine.Pin.IN,pull=machine.Pin.PULL_UP)
+stoppin = Pin(0,mode=machine.Pin.IN,pull=machine.Pin.PULL_UP)
 
 servo_pin = Pin(5)
 
@@ -71,7 +71,7 @@ while not wifi.isconnected():
         print("No wifi connection.")
         raise Warning
     print(".")
-    time.sleep(1)
+    utime.sleep(1)
     i=i+1
 
 ntptime.settime()
@@ -94,7 +94,7 @@ while True:
         update_time_i=update_time_i-1
     
     ds.convert_temp()
-    time.sleep_ms(1000)
+    utime.sleep_ms(1000)
 
     inside_temp = ds.read_temp(inside_rom)
     outside_temp = ds.read_temp(outside_rom)
@@ -132,7 +132,7 @@ while True:
     lcd.putstr(lcd_str)
     print(lcd_str)
 
-    time.sleep_ms(10000)
+    utime.sleep_ms(10000)
 
     if stoppin.value()==0:
         print("Pin down, stop")
