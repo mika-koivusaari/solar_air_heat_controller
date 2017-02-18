@@ -7,6 +7,13 @@ from esp8266_i2c_lcd import I2cLcd
 import ubinascii
 from umqtt.simple import MQTTClient
 import ntptime
+import network
+
+def gettimestr():
+    rtc=machine.RTC()
+    curtime=rtc.datetime()
+    _time="%04d" % curtime[0]+ "%02d" % curtime[1]+ "%02d" % curtime[2]+" "+ "%02d" % curtime[4]+ "%02d" % curtime[5]
+    return _time
 
 servo_min_angle = 10
 servo_max_angle = 160
@@ -55,6 +62,22 @@ for rom in roms:
     else:
         print('Unknown sensor found. ', rom)
 
+# Check if we have wifi, and wait for connection if not.
+print("Check wifi connection.")
+wifi = network.WLAN(network.STA_IF)
+i = 0
+while not wifi.isconnected():
+    if (i>10):
+        print("No wifi connection.")
+        raise Warning
+    print(".")
+    time.sleep(1)
+    i=i+1
+
+ntptime.settime()
+
+c = MQTTClient('solar_client', '192.168.0.106')
+c.connect()
 
 # scan for devices on the bus
 #roms = ds.scan()
@@ -62,11 +85,13 @@ for rom in roms:
 
 # loop 10 times and print all temperatures
 update_time_i=update_time
+send_values_i=send_values
 while True:
     if update_time_i==0:
-        ntp.settime()
+        ntptime.settime()
         update_time_i=update_time
-    update_time_i=update_time_i-1
+    else:
+        update_time_i=update_time_i-1
     
     ds.convert_temp()
     time.sleep_ms(1000)
@@ -74,6 +99,21 @@ while True:
     inside_temp = ds.read_temp(inside_rom)
     outside_temp = ds.read_temp(outside_rom)
     heated_temp = ds.read_temp(heated_rom)
+
+    if send_values_i==0:
+        _time=gettimestr()
+        topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
+        message=_time+' '+str(inside_temp)
+        c.publish(topic,message)
+        topic="raw/1wire/"+ubinascii.hexlify(outside_rom).decode()+"/temperature"
+        message=_time+' '+str(outside_temp)
+        c.publish(topic,message)
+        topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
+        message=_time+' '+str(heated_temp)
+        c.publish(topic,message)
+        send_values_i=send_values
+    else:
+        send_values_i=send_values_i-1
 
     if heated_temp>inside_temp+2:
         servo_angle=servo_angle+servo_adjust_angle
