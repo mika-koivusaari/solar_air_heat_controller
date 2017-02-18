@@ -100,21 +100,6 @@ while True:
     outside_temp = ds.read_temp(outside_rom)
     heated_temp = ds.read_temp(heated_rom)
 
-    if send_values_i==0:
-        _time=gettimestr()
-        topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
-        message=_time+' '+str(inside_temp)
-        c.publish(topic,message)
-        topic="raw/1wire/"+ubinascii.hexlify(outside_rom).decode()+"/temperature"
-        message=_time+' '+str(outside_temp)
-        c.publish(topic,message)
-        topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
-        message=_time+' '+str(heated_temp)
-        c.publish(topic,message)
-        send_values_i=send_values
-    else:
-        send_values_i=send_values_i-1
-
     if heated_temp>inside_temp+2:
         servo_angle=servo_angle+servo_adjust_angle
     if heated_temp<inside_temp:
@@ -126,6 +111,24 @@ while True:
         servo_angle=servo_min_angle
 
     servo.write_angle(degrees=servo_angle)
+
+    if send_values_i==0:
+        _time=gettimestr()
+        topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
+        message=_time+' '+str(inside_temp)
+        c.publish(topic,message)
+        topic="raw/1wire/"+ubinascii.hexlify(outside_rom).decode()+"/temperature"
+        message=_time+' '+str(outside_temp)
+        c.publish(topic,message)
+        topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
+        message=_time+' '+str(heated_temp)
+        c.publish(topic,message)
+        topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/servo"
+        message=_time+" "+str(servo_angle)
+        c.publish(topic,message)
+        send_values_i=send_values
+    else:
+        send_values_i=send_values_i-1
 
     lcd_str = "In % 3.0f Out % 3.0f\nHeated % 3.0f   %d" %(inside_temp, outside_temp, heated_temp, servo_angle)
     lcd.clear()
