@@ -81,11 +81,6 @@ ntptime.settime()
 c = MQTTClient('solar_client', '192.168.0.106')
 c.connect()
 
-# scan for devices on the bus
-#roms = ds.scan()
-#print('found devices:', roms)
-
-# loop 10 times and print all temperatures
 update_time_i=update_time
 send_values_i=send_values
 while True:
@@ -150,26 +145,3 @@ while True:
         print("Pin down, stop")
         break
 
-
-#init 1-wire
-#sensors:
-#outside temp
-#heated air temp
-#inside temp
-
-#init servo
-
-#init timer1 10 sec
-#init timer2 60 sec
-
-#timer1
-#check if heated air temp > inside temp+8
-# open flap more
-#servo.write_angle(degrees=45)
-#check if heated air temp < inside temp+3
-# close flap more
-
-#timer2
-#send temps + flap position with mqtt
-#measure voltage from adc (small solar panel)
-#send voltage with mqtt
