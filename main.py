@@ -47,6 +47,8 @@ servo_pin = Pin(5)
 servo=Servo(servo_pin)
 servo.write_angle(degrees=servo_angle)
 
+adc = machine.ADC(0)
+
 i2c = I2C(scl=Pin(13), sda=Pin(12), freq=400000)
 lcd = I2cLcd(i2c, 0x3f, 2, 16)
 
@@ -114,6 +116,7 @@ while True:
 
     if send_values_i==0:
         _time=gettimestr()
+        #temps
         topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
         message=_time+' '+str(inside_temp)
         c.publish(topic,message)
@@ -123,8 +126,14 @@ while True:
         topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
         message=_time+' '+str(heated_temp)
         c.publish(topic,message)
+        #servo angle
         topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/servo"
         message=_time+" "+str(servo_angle)
+        c.publish(topic,message)
+        #solar panel voltage
+        voltage = adc.read();
+        topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/adc"
+        message=_time+" "+str(voltage)
         c.publish(topic,message)
         send_values_i=send_values
     else:
