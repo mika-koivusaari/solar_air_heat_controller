@@ -46,6 +46,7 @@ servo_pin = Pin(5)
 
 servo=Servo(servo_pin)
 servo.write_angle(degrees=servo_angle)
+servo_angle_old=servo_angle
 
 adc = machine.ADC(0)
 
@@ -92,6 +93,7 @@ def loop_callback(temp):
     global c
     global ds
     global servo_angle
+    global servo_angle_old
     global servo
     global lcd
     global stoppin
@@ -119,7 +121,9 @@ def loop_callback(temp):
     if servo_angle<servo_min_angle:
         servo_angle=servo_min_angle
 
-    servo.write_angle(degrees=servo_angle)
+    if (servo_angle_old!=servo_angle):
+        servo.write_angle(degrees=servo_angle)
+        servo_angle_old=servo_angle
 
     if send_values_i==0:
         _time=gettimestr()
