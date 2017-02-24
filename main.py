@@ -83,7 +83,19 @@ c.connect()
 
 update_time_i=update_time
 send_values_i=send_values
-while True:
+
+def loop_callback(temp):
+    global update_time_i
+    global update_time
+    global send_values_i
+    global send_values
+    global c
+    global ds
+    global servo_angle
+    global servo
+    global lcd
+    global stoppin
+
     if update_time_i==0:
         ntptime.settime()
         update_time_i=update_time
@@ -139,9 +151,10 @@ while True:
     lcd.putstr(lcd_str)
     print(lcd_str)
 
-    utime.sleep_ms(10000)
-
     if stoppin.value()==0:
         print("Pin down, stop")
-        break
+        tim.deinit()
 
+
+tim = machine.Timer(-1)
+tim.init(period=sleep_time, mode=machine.Timer.PERIODIC, callback=loop_callback)
