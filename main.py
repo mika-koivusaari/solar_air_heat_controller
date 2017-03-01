@@ -67,20 +67,30 @@ for rom in roms:
 
 # Check if we have wifi, and wait for connection if not.
 print("Check wifi connection.")
+lcd.clear()
+lcd.putstr("Connect to wifi")
 wifi = network.WLAN(network.STA_IF)
 i = 0
 while not wifi.isconnected():
     if (i>10):
         print("No wifi connection.")
+        lcd.putstr("No wifi")
         raise Warning
     print(".")
+    lcd.putstr(".")
     utime.sleep(1)
     i=i+1
 
+lcd.clear()
+lcd.putstr("Set NTP time")
 ntptime.settime()
+lcd.putstr(" OK")
 
+lcd.clear()
+lcd.putstr("Connect to MQTT broker")
 c = MQTTClient('solar_client', '192.168.0.106')
 c.connect()
+lcd.putstr(" OK")
 
 update_time_i=update_time
 send_values_i=send_values
