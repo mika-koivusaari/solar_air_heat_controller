@@ -92,6 +92,11 @@ c = MQTTClient('solar_client', '192.168.0.106')
 c.connect()
 lcd.putstr(" OK")
 
+topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
+_time=gettimestr()
+message=_time+" started"
+c.publish(topic,message)
+
 update_time_i=update_time
 send_values_i=send_values
 
