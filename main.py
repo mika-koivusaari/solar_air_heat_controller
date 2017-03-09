@@ -94,7 +94,7 @@ lcd.putstr(" OK")
 
 topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
 _time=gettimestr()
-message=_time+" started"
+message=_time+" started "+str(machine.reset_cause())
 c.publish(topic,message)
 
 update_time_i=update_time
