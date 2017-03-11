@@ -6,7 +6,7 @@
     <views>
         <view name="breadboardView" backgroundColor="#ffffff" gridSize="0.1in" showGrid="1" alignToGrid="1" viewFromBelow="0"/>
         <view name="schematicView" backgroundColor="#ffffff" gridSize="0.1in" showGrid="1" alignToGrid="1" viewFromBelow="0"/>
-        <view name="pcbView" backgroundColor="#333333" gridSize="0.1in" showGrid="1" alignToGrid="1" viewFromBelow="0" autorouteTraceWidth="24" autorouteViaHoleSize="" GPG_Keepout="" DRC_Keepout="" autorouteViaRingThickness=""/>
+        <view name="pcbView" backgroundColor="#333333" gridSize="0.1in" showGrid="1" alignToGrid="1" viewFromBelow="0" autorouteTraceWidth="24" autorouteViaHoleSize="0.4mm" GPG_Keepout="" DRC_Keepout="0.01in" autorouteViaRingThickness="0.3mm"/>
     </views>
     <instances>
         <instance moduleIdRef="TwoLayerRectanglePCBModuleID" modelIndex="5764" path=":/resources/parts/core/rectangle_pcb_two_layers.fzp">
@@ -1558,8 +1558,8 @@
                     </connectors>
                 </breadboardView>
                 <pcbView layer="copper0">
-                    <geometry z="5.50002" x="54" y="11.2051"/>
-                    <titleGeometry visible="true" x="153" y="4.20507" z="12.5" xOffset="99" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="5.50002" x="81" y="38.2051"/>
+                    <titleGeometry visible="true" x="180" y="31.2051" z="12.5" xOffset="99" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -1925,10 +1925,10 @@
                     </connectors>
                 </breadboardView>
                 <pcbView layer="copper0">
-                    <geometry z="5.50005" x="225" y="27">
+                    <geometry z="5.50005" x="243" y="63">
                         <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="49.5" m32="-4.5" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="279" y="20" z="12.5" xOffset="54" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="297" y="56" z="12.5" xOffset="54" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -5150,8 +5150,11 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00013" x="164.7" y="110.7"/>
-                    <titleGeometry visible="true" x="177.3" y="103.7" z="13.0001" xOffset="12.6" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="6.00013" x="209.7" y="173.7">
+                        <transform m11="0" m12="-1" m13="0" m21="1" m22="0" m23="0" m31="-9" m32="21.6" m33="1"/>
+                    </geometry>
+                    <titleGeometry visible="true" x="192.7" y="174.7" z="13.0001" xOffset="-17" yOffset="1" textColor="#000000" fontSize="5">
+                        <transform m11="0" m12="-1" m13="0" m21="1" m22="0" m23="0" m31="1" m32="8" m33="1"/>
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -5608,10 +5611,10 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00014" x="113.625" y="149.13">
+                    <geometry z="6.00014" x="86.625" y="149.13">
                         <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="25.245" m32="-17.505" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="156.375" y="142.13" z="13.0001" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="129.375" y="142.13" z="13.0001" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -5695,10 +5698,10 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00017" x="185.625" y="113.13">
+                    <geometry z="6.00017" x="131.625" y="149.13">
                         <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="25.245" m32="-17.505" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="228.375" y="106.13" z="13.0002" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="174.375" y="142.13" z="13.0002" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -5791,10 +5794,11 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00017" x="27.625" y="10.13">
-                        <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="25.245" m32="-17.505" m33="1"/>
+                    <geometry z="6.00017" x="122.625" y="131.13">
+                        <transform m11="-1" m12="0" m13="0" m21="0" m22="-1" m23="0" m31="42.75" m32="7.74" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="70.505" y="3.755" z="13.0002" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="146.87" y="157.375" z="13.0002" xOffset="24.245" yOffset="26.245" textColor="#000000" fontSize="5">
+                        <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="8" m32="-1" m33="1"/>
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -5866,10 +5870,10 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00018" x="218.431" y="111.954">
+                    <geometry z="6.00018" x="92.4313" y="174.954">
                         <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="26.0716" m32="-3.01185" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="247.515" y="104.954" z="13.0002" xOffset="29.0835" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="121.515" y="167.954" z="13.0002" xOffset="29.0835" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -6061,10 +6065,10 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00019" x="254.431" y="111.954">
+                    <geometry z="6.00019" x="137.431" y="174.954">
                         <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="26.0716" m32="-3.01185" m33="1"/>
                     </geometry>
-                    <titleGeometry visible="true" x="283.515" y="104.954" z="13.0002" xOffset="29.0835" yOffset="-7" textColor="#000000" fontSize="5">
+                    <titleGeometry visible="true" x="166.515" y="167.954" z="13.0002" xOffset="29.0835" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -6271,8 +6275,8 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.0002" x="36.8713" y="6.1975"/>
-                    <titleGeometry visible="true" x="61.9793" y="-0.2255" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="6.0002" x="68.85" y="-80.4225"/>
+                    <titleGeometry visible="true" x="93.1075" y="-87.4225" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -6364,8 +6368,8 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.0002" x="56.8713" y="26.1975"/>
-                    <titleGeometry visible="true" x="81.9793" y="19.7745" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="6.0002" x="68.85" y="-53.4225"/>
+                    <titleGeometry visible="true" x="93.1075" y="-60.4225" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -6455,10 +6459,9 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.00021" x="293.625" y="113.13">
-                        <transform m11="0" m12="1" m13="0" m21="-1" m22="0" m23="0" m31="25.245" m32="-17.505" m33="1"/>
-                    </geometry>
-                    <titleGeometry visible="true" x="336.375" y="106.13" z="13.0002" xOffset="42.75" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="6.00021" x="77.625" y="23.13"/>
+                    <titleGeometry visible="true" x="59.13" y="-30.375" z="13.0002" xOffset="-18.495" yOffset="-53.505" textColor="#000000" fontSize="5">
+                        <transform m11="0" m12="-1" m13="0" m21="1" m22="0" m23="0" m31="29" m32="36" m33="1"/>
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -7040,8 +7043,8 @@
                     </connectors>
                 </schematicView>
                 <pcbView layer="copper0">
-                    <geometry z="6.0002" x="36.8713" y="6.1975"/>
-                    <titleGeometry visible="true" x="62.8505" y="-0.028" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
+                    <geometry z="6.0002" x="68.85" y="-107.423"/>
+                    <titleGeometry visible="true" x="93.1075" y="-114.423" z="13.0002" xOffset="24.2575" yOffset="-7" textColor="#000000" fontSize="5">
                         <displayKey key=""/>
                     </titleGeometry>
                     <connectors>
@@ -8345,6 +8348,15 @@ p, li { white-space: pre-wrap; }
                     </connectors>
                 </pcbView>
             </views>
+        </instance>
+        <instance moduleIdRef="WireModuleID" modelIndex="85417278" path=":/resources/parts/core/wire.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WireModuleID" modelIndex="85417702" path=":/resources/parts/core/wire.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WireModuleID" modelIndex="85418547" path=":/resources/parts/core/wire.fzp">
+            <views/>
         </instance>
     </instances>
 </module>
