@@ -32,9 +32,12 @@ update_time=6*60 #every hour
 # create the onewire object
 ds = ds18x20.DS18X20(onewire.OneWire(dat))
 
-outside_rom = bytearray(b'(\xcf\xbe\xce\x01\x00\x00\xcf')
-heated_rom = bytearray(b'(\xffpA\x82\x16\x03\xc3')
-inside_rom = bytearray(b'(\xff\n\xa3\x81\x16\x03\xb9')
+outside_rom = ubinascii.unhexlify('28cfbece010000cf')
+#bytearray(b'(\xcf\xbe\xce\x01\x00\x00\xcf')
+heated_rom = ubinascii.unhexlify('28ff7041821603c3')
+#bytearray(b'(\xffpA\x82\x16\x03\xc3')
+inside_rom = ubinascii.unhexlify('28ff0aa3811603b9')
+#bytearray(b'(\xff\n\xa3\x81\x16\x03\xb9')
 
 outside_temp=0
 heated_temp=0
@@ -57,13 +60,13 @@ lcd = I2cLcd(i2c, 0x3f, 2, 16)
 roms = ds.scan()
 for rom in roms:
     if rom == outside_rom:
-        print('Outside sensor found.', rom)
+        print('Outside sensor found.', ubinascii.hexlify(rom).decode())
     elif rom == heated_rom:
-        print('Heated air sensor found.', rom)
+        print('Heated air sensor found.', ubinascii.hexlify(rom).decode())
     elif rom == inside_rom:
-        print('Inside sensor found.', rom)
+        print('Inside sensor found.', ubinascii.hexlify(rom).decode())
     else:
-        print('Unknown sensor found. ', rom)
+        print('Unknown sensor found. ', ubinascii.hexlify(rom).decode())
 
 # Check if we have wifi, and wait for connection if not.
 print("Check wifi connection.")
