@@ -32,9 +32,9 @@ update_time=6*60 #every hour
 # create the onewire object
 ds = ds18x20.DS18X20(onewire.OneWire(dat))
 
-outside_rom = bytearray(b'(\xff}t\x83\x16\x04\xce')
-heated_rom = bytearray(b'(\xff.6\x82\x16\x05\x07')
-inside_rom = bytearray(b'(\xffF\x1d\x85\x16\x05\xb6')
+outside_rom = bytearray(b'(\xcf\xbe\xce\x01\x00\x00\xcf')
+heated_rom = bytearray(b'(\xffpA\x82\x16\x03\xc3')
+inside_rom = bytearray(b'(\xff\n\xa3\x81\x16\x03\xb9')
 
 outside_temp=0
 heated_temp=0
