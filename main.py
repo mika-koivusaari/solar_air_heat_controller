@@ -8,6 +8,7 @@ import ubinascii
 from umqtt.simple import MQTTClient
 import ntptime
 import network
+import webrepl
 
 def gettimestr():
     rtc=machine.RTC()
@@ -84,6 +85,9 @@ while not wifi.isconnected():
     utime.sleep(1)
     i=i+1
 
+webrepl.start()
+lcd.clear()
+lcd.putstr("Webrepl started")
 lcd.clear()
 lcd.putstr("Set NTP time")
 ntptime.settime()
