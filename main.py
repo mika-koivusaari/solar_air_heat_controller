@@ -85,9 +85,6 @@ while not wifi.isconnected():
     utime.sleep(1)
     i=i+1
 
-webrepl.start()
-lcd.clear()
-lcd.putstr("Webrepl started")
 lcd.clear()
 lcd.putstr("Set NTP time")
 ntptime.settime()
