@@ -8,7 +8,6 @@ import ubinascii
 from umqtt.simple import MQTTClient
 import ntptime
 import network
-import webrepl
 
 def gettimestr():
     rtc=machine.RTC()
@@ -117,66 +116,88 @@ def loop_callback(temp):
     global lcd
     global stoppin
 
-    if update_time_i==0:
-        ntptime.settime()
-        update_time_i=update_time
-    else:
-        update_time_i=update_time_i-1
+    try:
+        if update_time_i==0:
+            ntptime.settime()
+            update_time_i=update_time
+        else:
+            update_time_i=update_time_i-1
+        
+        ds.convert_temp()
+        utime.sleep_ms(1000)
     
-    ds.convert_temp()
-    utime.sleep_ms(1000)
-
-    inside_temp = ds.read_temp(inside_rom)
-    outside_temp = ds.read_temp(outside_rom)
-    heated_temp = ds.read_temp(heated_rom)
-
-    if heated_temp>inside_temp+2:
-        servo_angle=servo_angle+servo_adjust_angle
-    if heated_temp<inside_temp:
-        servo_angle=servo_angle-servo_adjust_angle
-
-    if servo_angle>servo_max_angle:
-        servo_angle=servo_max_angle
-    if servo_angle<servo_min_angle:
-        servo_angle=servo_min_angle
-
-    if (servo_angle_old!=servo_angle):
-        servo.write_angle(degrees=servo_angle)
-        servo_angle_old=servo_angle
-
-    if send_values_i==0:
-        _time=gettimestr()
-        #temps
-        topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
-        message=_time+' '+str(inside_temp)
-        c.publish(topic,message)
-        topic="raw/1wire/"+ubinascii.hexlify(outside_rom).decode()+"/temperature"
-        message=_time+' '+str(outside_temp)
-        c.publish(topic,message)
-        topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
-        message=_time+' '+str(heated_temp)
-        c.publish(topic,message)
-        #servo angle
-        topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/servo"
-        message=_time+" "+str(servo_angle)
-        c.publish(topic,message)
-        #solar panel voltage
-        voltage = adc.read();
-        topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/adc"
-        message=_time+" "+str(voltage)
-        c.publish(topic,message)
-        send_values_i=send_values
-    else:
-        send_values_i=send_values_i-1
-
-    lcd_str = "In % 3.0f Out % 3.0f\nHeated % 3.0f   %d" %(inside_temp, outside_temp, heated_temp, servo_angle)
-    lcd.clear()
-    lcd.putstr(lcd_str)
-    print(lcd_str)
-
-    if stoppin.value()==0:
-        print("Pin down, stop")
-        tim.deinit()
+        inside_temp = ds.read_temp(inside_rom)
+        outside_temp = ds.read_temp(outside_rom)
+        heated_temp = ds.read_temp(heated_rom)
+    
+        if heated_temp>inside_temp+2:
+            servo_angle=servo_angle+servo_adjust_angle
+        if heated_temp<inside_temp:
+            servo_angle=servo_angle-servo_adjust_angle
+    
+        if servo_angle>servo_max_angle:
+            servo_angle=servo_max_angle
+        if servo_angle<servo_min_angle:
+            servo_angle=servo_min_angle
+    
+        if (servo_angle_old!=servo_angle):
+            servo.write_angle(degrees=servo_angle)
+            servo_angle_old=servo_angle
+    
+        if send_values_i==0:
+            _time=gettimestr()
+            #temps
+            topic="raw/1wire/"+ubinascii.hexlify(inside_rom).decode()+"/temperature"
+            message=_time+' '+str(inside_temp)
+            c.publish(topic,message)
+            topic="raw/1wire/"+ubinascii.hexlify(outside_rom).decode()+"/temperature"
+            message=_time+' '+str(outside_temp)
+            c.publish(topic,message)
+            topic="raw/1wire/"+ubinascii.hexlify(heated_rom).decode()+"/temperature"
+            message=_time+' '+str(heated_temp)
+            c.publish(topic,message)
+            #servo angle
+            topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/servo"
+            message=_time+" "+str(servo_angle)
+            c.publish(topic,message)
+            #solar panel voltage
+            voltage = adc.read();
+            topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/adc"
+            message=_time+" "+str(voltage)
+            c.publish(topic,message)
+            send_values_i=send_values
+        else:
+            send_values_i=send_values_i-1
+    
+        lcd_str = "In % 3.0f Out % 3.0f\nHeated % 3.0f   %d" %(inside_temp, outside_temp, heated_temp, servo_angle)
+        lcd.clear()
+        lcd.putstr(lcd_str)
+        print(lcd_str)
+    
+        if stoppin.value()==0:
+            print("Pin down, stop")
+            tim.deinit()
+    except Exception as e:
+        try:
+            #Print exception in case someone is looking.
+            #This should allways work.
+            print(e)
+            #Second option is to put the exception on LCD
+            #This will work if we have an LCD connected
+            lcd.clear()
+            lcd.putstr(repr(e))
+            #Third option is to send exception via MQTT
+            #This should work if we have a connection,
+            topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
+            _time=gettimestr()
+            message=_time+" exception "+repr(e)
+            c.publish(topic,message)
+        except:
+            #If we can't do all of the above then
+            #we have a fatal error and should stop
+            #so that the error stays in the LCD
+            tim.deinit()
+            raise
 
 
 tim = machine.Timer(-1)
