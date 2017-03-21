@@ -15,6 +15,30 @@ def gettimestr():
     _time="%04d" % curtime[0]+ "%02d" % curtime[1]+ "%02d" % curtime[2]+" "+ "%02d" % curtime[4]+ "%02d" % curtime[5]
     return _time
 
+#get ntp time
+#retry=0 try once and ignore errors silently
+#retry>0 try retry times and raise error if not
+#succesfull
+def getntptime(retry=0):
+    retryleft=retry
+    while retryleft>=0:
+        try:
+            lcd.clear()
+            lcd.putstr("Set NTP time")
+            ntptime.settime()
+            lcd.putstr(" OK")
+            return
+        except:
+            if retry>0:
+                if retryleft==0:
+                    raise
+                retryleft=retryleft-1
+                lcd.putstr(".")
+                utime.sleep(5)
+            else:
+                retryleft=-1
+                
+
 servo_min_angle = 10
 servo_max_angle = 160
 servo_angle=servo_min_angle
@@ -84,10 +108,7 @@ while not wifi.isconnected():
     utime.sleep(1)
     i=i+1
 
-lcd.clear()
-lcd.putstr("Set NTP time")
-ntptime.settime()
-lcd.putstr(" OK")
+getntptime(retry=10)
 
 lcd.clear()
 lcd.putstr("Connect to MQTT broker")
@@ -118,7 +139,7 @@ def loop_callback(temp):
 
     try:
         if update_time_i==0:
-            ntptime.settime()
+            getntptime(retry=0)
             update_time_i=update_time
         else:
             update_time_i=update_time_i-1
