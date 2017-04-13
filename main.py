@@ -110,11 +110,15 @@ while not wifi.isconnected():
 
 getntptime(retry=10)
 
-lcd.clear()
-lcd.putstr("Connect to MQTT broker")
-c = MQTTClient('solar_client', '192.168.0.106')
-c.connect()
-lcd.putstr(" OK")
+def mqttConnect():
+    lcd.clear()
+    lcd.putstr("Connect to MQTT broker")
+    c = MQTTClient('solar_client', '192.168.0.106')
+    c.connect()
+    lcd.putstr(" OK")
+    return c
+
+c=mqttConnect()
 
 topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
 _time=gettimestr()
@@ -198,6 +202,29 @@ def loop_callback(temp):
         if stoppin.value()==0:
             print("Pin down, stop")
             tim.deinit()
+    except OSError as e:
+        try:
+            if e.errno==103: #ECONNABORTED
+                c=mqttConnect()
+            #Print exception in case someone is looking.
+            #This should allways work.
+            print(e)
+            #Second option is to put the exception on LCD
+            #This will work if we have an LCD connected
+            lcd.clear()
+            lcd.putstr(repr(e))
+            #Third option is to send exception via MQTT
+            #This should work if we have a connection,
+            topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
+            _time=gettimestr()
+            message=_time+" exception "+repr(e)
+            c.publish(topic,message)
+        except:
+            #If we can't do all of the above then
+            #we have a fatal error and should stop
+            #so that the error stays in the LCD
+            tim.deinit()
+            raise
     except Exception as e:
         try:
             #Print exception in case someone is looking.
