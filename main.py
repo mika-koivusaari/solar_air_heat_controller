@@ -111,6 +111,7 @@ while not wifi.isconnected():
 getntptime(retry=10)
 
 def mqttConnect():
+    global lcd
     lcd.clear()
     lcd.putstr("Connect to MQTT broker")
     c = MQTTClient('solar_client', '192.168.0.106')
@@ -122,7 +123,7 @@ c=mqttConnect()
 
 topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
 _time=gettimestr()
-message=_time+" started "+str(machine.reset_cause())
+message=_time+" started "+str(machine.reset_cause())+" "+(wifi.ifconfig()[0])
 c.publish(topic,message)
 
 update_time_i=update_time
