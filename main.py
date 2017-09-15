@@ -37,7 +37,34 @@ def getntptime(retry=0):
                 utime.sleep(5)
             else:
                 retryleft=-1
-                
+
+def mqttConnect():
+    global lcd
+    lcd.clear()
+    lcd.putstr("Connect to MQTT broker")
+    c = MQTTClient('solar_client', '192.168.0.106')
+    c.connect()
+    lcd.putstr(" OK")
+    return c
+
+def wifiConnect():
+    # Check if we have wifi, and wait for connection if not.
+    print("Check wifi connection.")
+    lcd.clear()
+    lcd.putstr("Connect to wifi")
+    wifi = network.WLAN(network.STA_IF)
+    i = 0
+    while not wifi.isconnected():
+        if (i>10):
+            print("No wifi connection.")
+            lcd.putstr("No wifi")
+            raise Warning
+        print(".")
+        lcd.putstr(".")
+        utime.sleep(1)
+        i=i+1
+
+error = ""
 
 servo_min_angle = 10
 servo_max_angle = 160
@@ -92,32 +119,9 @@ for rom in roms:
     else:
         print('Unknown sensor found. ', ubinascii.hexlify(rom).decode())
 
-# Check if we have wifi, and wait for connection if not.
-print("Check wifi connection.")
-lcd.clear()
-lcd.putstr("Connect to wifi")
-wifi = network.WLAN(network.STA_IF)
-i = 0
-while not wifi.isconnected():
-    if (i>10):
-        print("No wifi connection.")
-        lcd.putstr("No wifi")
-        raise Warning
-    print(".")
-    lcd.putstr(".")
-    utime.sleep(1)
-    i=i+1
+wifiConnect()
 
-getntptime(retry=10)
-
-def mqttConnect():
-    global lcd
-    lcd.clear()
-    lcd.putstr("Connect to MQTT broker")
-    c = MQTTClient('solar_client', '192.168.0.106')
-    c.connect()
-    lcd.putstr(" OK")
-    return c
+#getntptime(retry=10)
 
 c=mqttConnect()
 
@@ -143,11 +147,11 @@ def loop_callback(temp):
     global stoppin
 
     try:
-        if update_time_i==0:
-            getntptime(retry=0)
-            update_time_i=update_time
-        else:
-            update_time_i=update_time_i-1
+#        if update_time_i==0:
+#            getntptime(retry=0)
+#            update_time_i=update_time
+#        else:
+#            update_time_i=update_time_i-1
         
         ds.convert_temp()
         utime.sleep_ms(1000)
@@ -205,8 +209,6 @@ def loop_callback(temp):
             tim.deinit()
     except OSError as e:
         try:
-            if e.errno==103: #ECONNABORTED
-                c=mqttConnect()
             #Print exception in case someone is looking.
             #This should allways work.
             print(e)
@@ -214,6 +216,8 @@ def loop_callback(temp):
             #This will work if we have an LCD connected
             lcd.clear()
             lcd.putstr(repr(e))
+            if e.errno==103: #ECONNABORTED
+                c=mqttConnect()
             #Third option is to send exception via MQTT
             #This should work if we have a connection,
             topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/messages"
