@@ -1,6 +1,6 @@
 import utime
 import machine
-from machine import I2C, Pin
+from machine import I2C, Pin, PWM
 from servo import Servo
 import onewire, ds18x20
 from esp8266_i2c_lcd import I2cLcd
@@ -63,6 +63,7 @@ def wifiConnect():
         lcd.putstr(".")
         utime.sleep(1)
         i=i+1
+    return wifi
 
 error = ""
 
@@ -72,6 +73,14 @@ servo_angle=servo_min_angle
 servo_adjust_angle=10
 # the device is on GPIO12
 dat = machine.Pin(14)
+
+fan_speed_min = 400
+fan_speed_max = 1023
+fan_speed = 0
+fan_speed_old = 0
+fan_adjust = 10
+fan_pin = Pin(4)
+fan=PWM(fan_pin,duty=0)
 
 #sleep time in every loop
 sleep_time=10000
@@ -119,7 +128,7 @@ for rom in roms:
     else:
         print('Unknown sensor found. ', ubinascii.hexlify(rom).decode())
 
-wifiConnect()
+wifi=wifiConnect()
 
 #getntptime(retry=10)
 
@@ -145,6 +154,11 @@ def loop_callback(temp):
     global servo
     global lcd
     global stoppin
+    global fan_speed_min
+    global fan_speed_max
+    global fan_speed
+    global fan_speed_old
+    global fan
 
     try:
 #        if update_time_i==0:
@@ -173,7 +187,29 @@ def loop_callback(temp):
         if (servo_angle_old!=servo_angle):
             servo.write_angle(degrees=servo_angle)
             servo_angle_old=servo_angle
-    
+
+        if servo_angle==servo_max_angle:
+            if heated_temp>inside_temp+20:
+                fan_speed=fan_speed+fan_adjust
+                if fan_speed<fan_speed_min:
+                    fan_speed=fan_speed_min
+            if heated_temp<inside_temp+10:
+                fan_speed=fan_speed-fan_adjust
+        else:
+            fan_speed=0
+            
+        if fan_speed<fan_speed_min:
+            fan_speed=0
+        if fan_speed>fan_speed_max:
+            fan_speed=fan_speed_max
+        if fan_speed_old==0 and fan_speed>0:
+            #make sure fan starts
+            fan.duty(fan_speed_max)
+            utime.sleep_ms(1000)
+        if fan_speed_old!=fan_speed:
+            fan.duty(fan_speed)
+            fan_speed_old=fan_speed
+        
         if send_values_i==0:
             _time=gettimestr()
             #temps
@@ -195,6 +231,11 @@ def loop_callback(temp):
             topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/adc"
             message=_time+" "+str(voltage)
             c.publish(topic,message)
+            #fan speed
+            topic="raw/esp8266/"+ubinascii.hexlify(machine.unique_id()).decode()+"/fan"
+            message=_time+" "+str(fan_speed)
+            c.publish(topic,message)
+            
             send_values_i=send_values
         else:
             send_values_i=send_values_i-1
@@ -229,6 +270,7 @@ def loop_callback(temp):
             #we have a fatal error and should stop
             #so that the error stays in the LCD
             tim.deinit()
+            fan.duty(0)
             raise
     except Exception as e:
         try:
@@ -250,6 +292,7 @@ def loop_callback(temp):
             #we have a fatal error and should stop
             #so that the error stays in the LCD
             tim.deinit()
+            fan.duty(0)
             raise
 
 
